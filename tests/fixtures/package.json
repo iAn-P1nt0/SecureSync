@@ -1,0 +1,11 @@
+{
+  "name": "test-fixture",
+  "version": "1.0.0",
+  "description": "Test fixture for SecureSync tests",
+  "dependencies": {
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
