@@ -14,11 +14,11 @@ export async function testDrivenUpdate(
   migrations: Migration[],
   options: RemediationOptions = {}
 ): Promise<UpdateResult> {
-  const runTests = options.runTests ?? true;
-  const createBackup = options.createBackup ?? true;
+  const shouldRunTests = options.runTests ?? true;
+  const shouldCreateBackup = options.createBackup ?? true;
 
   // 1. Run tests before update (baseline)
-  if (runTests) {
+  if (shouldRunTests) {
     const baselineTests = await runTests(projectPath);
     if (!baselineTests.passed) {
       return {
@@ -30,7 +30,7 @@ export async function testDrivenUpdate(
   }
 
   // 2. Create backup of package.json and lock file
-  if (createBackup) {
+  if (shouldCreateBackup) {
     await createBackupFiles(projectPath);
   }
 
@@ -48,7 +48,7 @@ export async function testDrivenUpdate(
     }
 
     // 5. Run tests after update
-    if (runTests) {
+    if (shouldRunTests) {
       const updatedTests = await runTests(projectPath);
 
       if (!updatedTests.passed) {
@@ -70,7 +70,7 @@ export async function testDrivenUpdate(
       migrations,
     };
   } catch (error) {
-    if (createBackup) {
+    if (shouldCreateBackup) {
       await rollback(projectPath);
     }
     throw error;
@@ -92,7 +92,7 @@ export async function runTests(projectPath: string): Promise<TestResult> {
       };
     }
 
-    const { stdout, stderr } = await execAsync(testCommand, {
+    const { stdout } = await execAsync(testCommand, {
       cwd: projectPath,
       env: { ...process.env, CI: 'true' },
     });

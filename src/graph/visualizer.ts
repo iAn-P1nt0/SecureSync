@@ -1,4 +1,4 @@
-import type { DependencyGraph, GraphNode } from './builder.js';
+import type { DependencyGraph } from './builder.js';
 
 export interface VisualizationOptions {
   format: 'tree' | 'dot' | 'json';
@@ -62,8 +62,6 @@ function renderTreeNode(
   for (let i = 0; i < children.length; i++) {
     const isLast = i === children.length - 1;
     const childPrefix = prefix + (isLast ? '└── ' : '├── ');
-    const nextPrefix = prefix + (isLast ? '    ' : '│   ');
-
     const childId = children[i];
     renderTreeNode(
       graph,
@@ -102,7 +100,7 @@ function visualizeAsDot(graph: DependencyGraph, options: VisualizationOptions): 
   return lines.join('\n');
 }
 
-function visualizeAsJson(graph: DependencyGraph, options: VisualizationOptions): string {
+function visualizeAsJson(graph: DependencyGraph, _options: VisualizationOptions): string {
   const data = {
     nodes: Array.from(graph.nodes.values()),
     edges: graph.edges,

@@ -95,7 +95,7 @@ export async function generateMigration(
   return migrations;
 }
 
-async function findImports(projectPath: string, packageName: string): Promise<string[]> {
+async function findImports(_projectPath: string, _packageName: string): Promise<string[]> {
   // This would use a tool like grep or a custom file walker
   // to find all files importing the package
   // For now, return empty array
@@ -114,7 +114,7 @@ function findAffectedAPI(callee: any, changes: APIChange[]): APIChange | null {
   return null;
 }
 
-function generateReplacement(node: any, change: APIChange): string | null {
+function generateReplacement(_node: any, change: APIChange): string | null {
   if (change.migration) {
     // If there's an explicit migration hint, use it
     return change.migration;

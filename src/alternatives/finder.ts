@@ -13,14 +13,21 @@ export async function findAlternatives(
   });
 
   // 2. Score each alternative
-  const scored = await Promise.all(
-    similar.map(async (pkg) => {
+  const scored: Alternative[] = await Promise.all(
+    similar.map(async (pkg): Promise<Alternative> => {
       const score = await scoreAlternative(pkg, packageName);
       const compatibility = await analyzeAPICompatibility(pkg, packageName);
       const migrationEffort = determineMigrationEffort(compatibility, score);
 
       return {
-        ...pkg,
+        name: pkg.name,
+        description: pkg.description,
+        downloads: pkg.downloads,
+        lastPublish: pkg.lastPublish,
+        stars: 0, // TODO: fetch from GitHub API
+        issues: 0, // TODO: fetch from GitHub API
+        maintainers: 0, // TODO: fetch from npm registry
+        vulnerabilities: 0, // TODO: fetch from security databases
         compatibility,
         migrationEffort,
         score,
@@ -45,7 +52,7 @@ async function extractKeywords(packageName: string): Promise<string[]> {
   }
 }
 
-async function searchNpm(options: {
+async function searchNpm(_options: {
   keywords: string[];
   exclude: string[];
 }): Promise<PackageMetadata[]> {
@@ -77,8 +84,8 @@ async function fetchPackageMetadata(packageName: string): Promise<PackageMetadat
 }
 
 async function analyzeAPICompatibility(
-  alternative: PackageMetadata,
-  original: string
+  _alternative: PackageMetadata,
+  _original: string
 ): Promise<number> {
   // This would analyze how similar the APIs are
   // Could use:
@@ -93,7 +100,7 @@ async function analyzeAPICompatibility(
 
 function determineMigrationEffort(
   compatibility: number,
-  score: number
+  _score: number
 ): 'low' | 'medium' | 'high' {
   if (compatibility >= 80) {
     return 'low';

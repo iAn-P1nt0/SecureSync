@@ -1,5 +1,3 @@
-import type { APIChange } from '../analyzer/types.js';
-
 export interface CodeChange {
   line: number;
   column: number;

@@ -81,7 +81,7 @@ async function downloadPackage(packageName: string, version: string): Promise<st
   return `/tmp/securesync-cache/${packageName}@${version}`;
 }
 
-async function loadChangelog(packagePath: string): Promise<string | null> {
+async function loadChangelog(_packagePath: string): Promise<string | null> {
   // This would read CHANGELOG.md, HISTORY.md, or similar files
   // For now, return null
   return null;

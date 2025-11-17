@@ -1,9 +1,9 @@
-import { compare, diff, valid } from 'semver';
+import { compare, diff, valid, type ReleaseType } from 'semver';
 
 export interface VersionDiff {
   fromVersion: string;
   toVersion: string;
-  diffType: 'major' | 'minor' | 'patch' | 'premajor' | 'preminor' | 'prepatch' | 'prerelease' | null;
+  diffType: ReleaseType | null;
   isUpgrade: boolean;
   isDowngrade: boolean;
   expectedBreakingChanges: boolean;

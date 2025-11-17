@@ -82,7 +82,7 @@ function buildDependencyTree(
   const deps = packageJson.dependencies || {};
   const devDeps = includeDevDeps ? (packageJson.devDependencies || {}) : {};
 
-  for (const [name, version] of Object.entries(deps)) {
+  for (const [name] of Object.entries(deps)) {
     const lockEntry = lockfile.packages?.[`node_modules/${name}`];
     if (lockEntry) {
       dependencies.set(name, {
@@ -100,7 +100,7 @@ function buildDependencyTree(
     }
   }
 
-  for (const [name, version] of Object.entries(devDeps)) {
+  for (const [name] of Object.entries(devDeps)) {
     const lockEntry = lockfile.packages?.[`node_modules/${name}`];
     if (lockEntry) {
       dependencies.set(name, {
@@ -135,7 +135,7 @@ function buildTransitiveDeps(lockfile: any, lockEntry: any): Map<string, Depende
   }
 
   const transitive = new Map<string, DependencyNode>();
-  for (const [name, version] of Object.entries(lockEntry.dependencies)) {
+  for (const [name] of Object.entries(lockEntry.dependencies)) {
     const transitiveEntry = lockfile.packages?.[`node_modules/${name}`];
     if (transitiveEntry) {
       transitive.set(name, {
@@ -171,12 +171,12 @@ function collectAllPackages(deps: Map<string, DependencyNode>, packages: Package
     }
   }
 
-  for (const [name, node] of deps) {
+  for (const [, node] of deps) {
     traverse(node.dependencies, false);
   }
 }
 
-async function queryNpmAudit(projectPath: string, depTree: DependencyTree): Promise<Vulnerability[]> {
+async function queryNpmAudit(_projectPath: string, _depTree: DependencyTree): Promise<Vulnerability[]> {
   // This would normally call the npm audit API
   // For now, returning a mock implementation structure
   const vulnerabilities: Vulnerability[] = [];
@@ -208,7 +208,7 @@ async function enhanceVulnerabilities(vulnerabilities: Vulnerability[]): Promise
 
 async function analyzeReachability(
   vulnerabilities: Vulnerability[],
-  projectPath: string
+  _projectPath: string
 ): Promise<Vulnerability[]> {
   // This would analyze if vulnerable code is actually imported/used
   // For now, return all vulnerabilities

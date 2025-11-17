@@ -1,6 +1,6 @@
 import { scanNpmProject, type ScanResult, type ScanOptions } from '../scanner/index.js';
 import { analyzeBreakingChanges, type BreakingChangeAnalysis } from '../analyzer/index.js';
-import { generateMigration, testDrivenUpdate, type Migration, type UpdateResult, type RemediationOptions } from '../remediation/index.js';
+import { generateMigration, testDrivenUpdate, type Migration } from '../remediation/index.js';
 import { findAlternatives, type Alternative, type SearchCriteria } from '../alternatives/index.js';
 import { buildGraph, visualize, type DependencyGraph, type VisualizationOptions } from '../graph/index.js';
 

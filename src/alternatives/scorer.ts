@@ -2,7 +2,7 @@ import type { PackageMetadata } from './types.js';
 
 export async function scoreAlternative(
   alternative: PackageMetadata,
-  originalPackage: string
+  _originalPackage: string
 ): Promise<number> {
   let score = 0;
 
@@ -72,7 +72,7 @@ function calculateMaintenanceScore(lastPublish: Date): number {
   }
 }
 
-async function calculateSecurityScore(packageName: string): Promise<number> {
+async function calculateSecurityScore(_packageName: string): Promise<number> {
   // This would query vulnerability databases
   // For now, return a placeholder
   // In real implementation:
