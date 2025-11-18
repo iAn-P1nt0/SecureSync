@@ -136,7 +136,7 @@ function buildSpdxDocument(
   const packageMap = buildPackageMetadataMap(tree.packages);
   const graph = buildDependencyGraph(tree);
   const packages = buildSpdxPackages(tree, packageMap.byKey, options);
-  const relationships = buildSpdxRelationships(tree, packageMap.byBomRef, graph);
+  const relationships = buildSpdxRelationships(tree, packageMap.byBomRef, graph, options);
   const annotations = options.attachVulnerabilities
     ? buildSpdxAnnotations(scanResult.vulnerabilities, packageMap.byKey, generatedAt)
     : [];
@@ -307,8 +307,8 @@ function buildSpdxPackages(
 ) {
   const packages = [];
 
-  const rootName = tree.name;
-  const rootVersion = tree.version;
+  const rootName = options.metadata?.componentName ?? tree.name;
+  const rootVersion = options.metadata?.componentVersion ?? tree.version;
 
   packages.push({
     name: rootName,
@@ -347,10 +347,13 @@ function buildSpdxPackages(
 function buildSpdxRelationships(
   tree: DependencyTree,
   packageMap: Map<string, PackageMetadata>,
-  graph: DependencyGraph
+  graph: DependencyGraph,
+  options: Partial<SbomGenerateOptions>
 ) {
   const relationships = [];
-  const rootRef = createSpdxRef(tree.name, tree.version);
+  const rootName = options.metadata?.componentName ?? tree.name;
+  const rootVersion = options.metadata?.componentVersion ?? tree.version;
+  const rootRef = createSpdxRef(rootName, rootVersion);
   const rootBomRef = createBomRef(tree.name, tree.version);
 
   relationships.push({
@@ -411,10 +414,10 @@ function buildSpdxAnnotations(
 
 function createBomRef(name: string, version: string): string {
   if (name.startsWith('@')) {
-    const [scope, pkgName] = name.slice(1).split('/');
-    const namespace = encodeURIComponent(scope ?? '');
-    const packageName = encodeURIComponent(pkgName ?? '');
-    return `pkg:npm/${namespace}/${packageName}@${version}`;
+    const [scope, pkgName] = name.split('/');
+    const encodedScope = encodeURIComponent(scope ?? '');
+    const encodedName = encodeURIComponent(pkgName ?? '');
+    return `pkg:npm/${encodedScope}/${encodedName}@${version}`;
   }
 
   return `pkg:npm/${encodeURIComponent(name)}@${version}`;

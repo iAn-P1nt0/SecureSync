@@ -11,6 +11,7 @@ Intelligent dependency security scanner with auto-fix capabilities. SecureSync g
 - **Test-Driven Updates**: Run tests before/after updates, rollback on failure
 - **Fast Scanning**: Dependency graph analysis in < 5 seconds for medium projects
 - **CI/CD Integration**: GitHub Actions, GitLab CI, Jenkins plugins ready
+- **SBOM Generation**: Produce CycloneDX or SPDX software bills of materials with vulnerability context
 - **Interactive CLI**: Beautiful terminal UI with progress indicators
 - **Programmatic API**: Use as library in other tools
 
