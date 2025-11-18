@@ -1,13 +1,18 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { scanNpmProject } from '../../../src/scanner/npm.js';
 import { readFile } from 'fs/promises';
+import { existsSync } from 'fs';
 
 vi.mock('fs/promises');
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+}));
 
 describe('npm scanner', () => {
   describe('scanNpmProject', () => {
     beforeEach(() => {
       vi.clearAllMocks();
+      vi.mocked(existsSync).mockReturnValue(true);
     });
 
     it('should scan project and return scan results', async () => {
