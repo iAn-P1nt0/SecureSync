@@ -55,3 +55,12 @@ export type {
   DependencyGraph,
   VisualizationOptions,
 } from './graph/index.js';
+
+// SBOM exports
+export { generateSbom } from './sbom/index.js';
+export type {
+  SbomGenerateOptions,
+  SbomGenerationResult,
+  SbomFormat,
+  SbomStats,
+} from './sbom/index.js';

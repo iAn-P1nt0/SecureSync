@@ -3,6 +3,7 @@ import ora, { Ora } from 'ora';
 import type { Vulnerability, ScanResult } from '../scanner/types.js';
 import type { BreakingChangeAnalysis } from '../analyzer/types.js';
 import type { Alternative } from '../alternatives/types.js';
+import type { SbomGenerationResult } from '../sbom/types.js';
 
 export class UI {
   private spinner: Ora | null = null;
@@ -159,6 +160,40 @@ export class UI {
       console.log(`   Vulnerabilities: ${alt.vulnerabilities === 0 ? chalk.green('0') : chalk.red(alt.vulnerabilities)}`);
       console.log(`   API Compatibility: ${alt.compatibility}%`);
       console.log(`   Migration Effort: ${this.getMigrationColor(alt.migrationEffort)(alt.migrationEffort.toUpperCase())}`);
+    }
+  }
+
+  printSbomSummary(result: SbomGenerationResult): void {
+    this.header('SBOM Summary');
+
+    console.log(`  Format: ${result.format.toUpperCase()}`);
+    console.log(`  Generated: ${result.generatedAt.toLocaleString()}`);
+    console.log(`  Components: ${result.stats.totalComponents}`);
+    console.log(`    Direct: ${result.stats.directDependencies}`);
+    console.log(`    Dev: ${result.stats.devDependencies}`);
+
+    if (result.outputPath) {
+      console.log(`  Output: ${result.outputPath}`);
+    }
+
+    if (result.embeddedVulnerabilities && result.vulnerabilities.length > 0) {
+      const counts = result.vulnerabilities.reduce<Record<'total' | 'low' | 'moderate' | 'high' | 'critical', number>>(
+        (acc, vuln) => {
+          acc.total += 1;
+          acc[vuln.severity] += 1;
+          return acc;
+        },
+        { total: 0, low: 0, moderate: 0, high: 0, critical: 0 }
+      );
+
+      console.log('\nVulnerabilities Embedded:');
+      console.log(`  Total: ${counts.total}`);
+      console.log(`  Critical: ${counts.critical}`);
+      console.log(`  High: ${counts.high}`);
+      console.log(`  Moderate: ${counts.moderate}`);
+      console.log(`  Low: ${counts.low}`);
+    } else if (result.vulnerabilities.length > 0) {
+      this.info('Vulnerabilities detected but not embedded. Re-run with --attach-vulns to include them in the SBOM.');
     }
   }
 

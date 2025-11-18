@@ -6,6 +6,7 @@ import { createAnalyzeCommand } from './commands/analyze.js';
 import { createAlternativesCommand } from './commands/alternatives.js';
 import { createFixCommand } from './commands/fix.js';
 import { createMigrateCommand } from './commands/migrate.js';
+import { createSbomCommand } from './commands/sbom.js';
 
 const program = new Command();
 
@@ -20,6 +21,7 @@ program.addCommand(createFixCommand());
 program.addCommand(createAnalyzeCommand());
 program.addCommand(createAlternativesCommand());
 program.addCommand(createMigrateCommand());
+program.addCommand(createSbomCommand());
 
 // Parse arguments
 program.parse(process.argv);
