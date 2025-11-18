@@ -3,6 +3,7 @@ import { analyzeBreakingChanges, type BreakingChangeAnalysis } from '../analyzer
 import { generateMigration, testDrivenUpdate, type Migration } from '../remediation/index.js';
 import { findAlternatives, type Alternative, type SearchCriteria } from '../alternatives/index.js';
 import { buildGraph, visualize, type DependencyGraph, type VisualizationOptions } from '../graph/index.js';
+import { generateSbom, type SbomGenerationResult, type SbomGenerateOptions } from '../sbom/index.js';
 
 export interface SecureSyncOptions {
   projectPath: string;
@@ -30,6 +31,18 @@ export class SecureSync {
     return scanNpmProject(this.options.projectPath, {
       projectPath: this.options.projectPath,
       ...scanOptions,
+    });
+  }
+
+  /**
+   * Generate a Software Bill of Materials for the project
+   */
+  async generateSbom(
+    options?: Partial<Omit<SbomGenerateOptions, 'projectPath'>>
+  ): Promise<SbomGenerationResult> {
+    return generateSbom(this.options.projectPath, {
+      projectPath: this.options.projectPath,
+      ...options,
     });
   }
 

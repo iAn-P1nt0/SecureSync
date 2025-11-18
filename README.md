@@ -52,6 +52,12 @@ securesync analyze lodash 4.17.20 4.17.21
 securesync alternatives moment
 ```
 
+### Generate SBOM
+
+```bash
+securesync sbom --format cyclonedx --attach-vulns --output sbom.cdx.json
+```
+
 ### Generate Migration Scripts
 
 ```bash
@@ -130,6 +136,22 @@ Options:
   --json                 Output as JSON
 ```
 
+### SBOM Command
+
+Generate a Software Bill of Materials:
+
+```bash
+securesync sbom [path]
+
+Options:
+  --format <format>       SBOM format (cyclonedx|spdx)
+  -d, --include-dev       Include dev dependencies
+  --attach-vulns          Embed vulnerability findings inside the SBOM
+  -o, --output <file>     Write SBOM to file (defaults to stdout)
+  --json                  Print SBOM JSON to stdout
+  --fail-on <severity>    Exit non-zero if vulnerabilities at or above severity are detected
+```
+
 ## Programmatic API
 
 Use SecureSync in your own tools:
@@ -165,6 +187,13 @@ const graph = await scanner.visualizeDependencies({
   highlightVulnerabilities: true,
 });
 console.log(graph);
+
+const sbom = await scanner.generateSbom({
+  format: 'cyclonedx',
+  attachVulnerabilities: true,
+  outputFile: 'sbom.cdx.json',
+});
+console.log(`SBOM saved to ${sbom.outputPath}`);
 ```
 
 ## API Reference
@@ -182,6 +211,7 @@ class SecureSync {
   findAlternatives(pkg: string, criteria?: SearchCriteria): Promise<Alternative[]>;
   visualizeDependencies(options?: VisualizationOptions): Promise<string>;
   getDependencyGraph(): Promise<DependencyGraph>;
+  generateSbom(options?: SbomGenerateOptions): Promise<SbomGenerationResult>;
 }
 ```
 
@@ -230,6 +260,21 @@ jobs:
           node-version: '20'
       - run: npx securesync scan --fail-on high
       - run: npx securesync fix --auto
+
+  sbom:
+    runs-on: ubuntu-latest
+    needs: scan
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install
+      - run: npx securesync sbom --format cyclonedx --attach-vulns --output sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
 ```
 
 ### GitLab CI
@@ -253,7 +298,12 @@ Create a `.securesyncrc.json` file in your project root:
   "maxSeverity": "moderate",
   "breakingChanges": "warn",
   "excludePackages": ["package-to-ignore"],
-  "includeDevDependencies": false
+  "includeDevDependencies": false,
+  "sbom": {
+    "format": "cyclonedx",
+    "attachVulnerabilities": true,
+    "output": "sbom.cdx.json"
+  }
 }
 ```
 
